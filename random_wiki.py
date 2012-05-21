@@ -119,11 +119,11 @@ def get_random_page(maxchars):
 
 # returns a good (somewhat random) time (float, in seconds) to wait before tweeting next
 def get_wait_time():
-	# as a base, wait between 1.5 and three hours
-	t = random.randrange(1.5 * 60 * 60, 3 * 60 * 60)
+	# as a base, wait between one and three hours
+	t = random.randrange(60 * 60, 3 * 60 * 60)
 	# add to this based on distance from 2:00pm (around which more tweets should happen)
 	hour_offset = abs(14 - datetime.datetime.now().hour)
-	t += random.randrange(hour_offset * 5, hour_offset * 10) # [0, 2] hours
+	t += 60 * random.randrange(hour_offset * 5, hour_offset * 10) # [0, 2] hours
 	# go time
 	return float(t)
 
