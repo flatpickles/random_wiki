@@ -149,4 +149,4 @@ if __name__ == "__main__":
 		
 	except KeyboardInterrupt:
 		nxt = max(int(when_set + wait_time - time.time()), 0)
-		print "\nWould have waited for %d hour(s), %d minutes before tweeting next.\n" % (nxt / 60 / 60, (nxt / 60) % 60)
+		print "\nWould have waited for %d hour(s), %d minutes before tweeting next (%d seconds).\n" % (nxt / 60 / 60, (nxt / 60) % 60, nxt)
