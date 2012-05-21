@@ -1,5 +1,6 @@
 import urllib, urllib2, re, string, sys, time, datetime, random
 
+# import tweepy (from local directory, if need be)
 try:
 	import tweepy
 except ImportError:
@@ -126,7 +127,7 @@ def get_wait_time():
 	# go time
 	return float(t)
 
-# entry point
+# Entry point. The first argument from command line (optional) specifies how many seconds to wait before the first tweet.
 if __name__ == "__main__":
 	# determine how long to wait based on first argument (if present)
 	wait_time = 0.0
@@ -154,5 +155,6 @@ if __name__ == "__main__":
 			when_set = time.time()
 		
 	except KeyboardInterrupt:
+		# when the user quits, display how long it would have been (easy restarting)
 		nxt = max(int(when_set + wait_time - time.time()), 0)
 		print "\nWould have waited for %d hour(s), %d minutes before tweeting next (%d seconds).\n" % (nxt / 60 / 60, (nxt / 60) % 60, nxt)
