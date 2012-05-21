@@ -1,4 +1,10 @@
-import urllib, urllib2, re, string, tweepy, sys, time, datetime, random
+import urllib, urllib2, re, string, sys, time, datetime, random
+
+try:
+	import tweepy
+except ImportError:
+	sys.path.append("../tweepy-1.4")
+	import tweepy
 
 # open creds file (private, uncommited storage of Bitly and Twitter credentials)
 creds_file = open("creds")
