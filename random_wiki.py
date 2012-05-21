@@ -1,5 +1,6 @@
-import urllib, urllib2, re, string
+import urllib, urllib2, re, string, tweepy, sys, time
 
+# usernames for services
 bitly_un = "hazmattron"
 twitter_un = "random_wiki"
 
@@ -8,6 +9,10 @@ creds = open("creds")
 both = creds.read().split("\n")
 bitly_key = both[0]
 twitter_pw = both[1]
+
+# initialize tweepy
+auth = tweepy.auth.BasicAuthHandler(twitter_un, twitter_pw)
+twitter_api = tweepy.API(auth)
 
 # list to define substrings which cannot end sentences
 not_ends = ["mr", "mrs", "dr", "ms", "ph", "jr", "sr", "no", "b", "esp", "pub", "br", "prof", \
@@ -60,7 +65,8 @@ def get_first_sentence(body, length):
 				"Wikify" in first_sentence or \
 				"proper linking" in first_sentence or \
 				"translated version" in first_sentence or \
-				"Coordinates" in first_sentence or \
+				"Coordinate" in first_sentence or \
+				"Glossary" in first_sentence or \
 				":" in first_sentence or \
 				"^" in first_sentence or \
 				first_sentence[0] not in string.ascii_uppercase:
@@ -83,27 +89,49 @@ def get_first_sentence(body, length):
 
 # returns a string with the first snippit of a random wikipedia page and a link (provide characters desired)
 def get_random_page(maxchars):
-	try_again = True
 	first_sentence = ""
-	while try_again:
+	shortened = ""
+	while len(first_sentence) == 0:
 		try:
 			# get page and stuff
 			opener = urllib2.build_opener()
 			opener.addheaders = [('User-agent', 'Mozilla/5.0')]
 			infile = opener.open('http://en.wikipedia.org/wiki/Special:Random')
 			url = infile.geturl()
-			# shortened = urllib2.urlopen(shorten(url)).read().strip('\n')
+			shortened = urllib2.urlopen(shorten(url)).read().strip('\n')
 			page = infile.read()
-			first_sentence = get_first_sentence(page, maxchars)
-				
-			try_again = False
+			first_sentence = get_first_sentence(page, maxchars - len(shortened))
 		except Exception:
-			pass
+			first_sentence = "" # loop again
 	
-	return first_sentence
+	return first_sentence + " " + shortened
 
-while True:
-	print get_random_page(100)
+# returns a good (somewhat random) time (float, in seconds) to wait before tweeting next
+def get_wait_time():
+	return 16.0
+
+# entry point
+if __name__ == "__main__":
+	# determine how long to wait based on first argument (if present)
+	wait_time = 0.0
+	if len(sys.argv) > 1:
+		wait_time = float(sys.argv[1])
+	when_set = time.time()
 	
-	
-# synonyms issue8
+	# until KeyboardInterrupt, tweet at intervals provided by get_wait_time
+	try:
+		while True:
+			# sleep
+			print "Waiting for %d seconds before tweeting next..." % wait_time
+			time.sleep(wait_time)
+			
+			# tweet
+			tweet = get_random_page(120)
+			print "Tweeting: \"%s\"" % tweet
+			
+			# carry on
+			wait_time = get_wait_time()
+			when_set = time.time()
+		
+	except KeyboardInterrupt:
+		print "\nYou killed random_wiki. Would have waited %d more seconds." % max(int(when_set + wait_time - time.time()), 0)
