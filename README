@@ -4,6 +4,6 @@ Matt Nichols
 random_wiki is a Python script intended to tweet the first sentence of a random Wikipedia article and a shortened link to said article several times a day.
 
 Known issues:
-- Sentence endings are determined using periods, but excepting circumstances to which any of several rules apply ("Dr.", "U.S.A.", or "Ph.D." for example). However, there's no way I've catalogued all possible abbreviations, so there will inevitably be some errors here.
+- Sentence endings are determined using periods, but excepting circumstances to which any of several rules apply ("Dr.", "U.S.A.", or "Ph.D." are examples where this is necessary). However, there's no way I've catalogued all possible abbreviations, so there will inevitably be some errors here.
 - The body of the article is found by the first <p> segment of the Wikipedia webpage, but occasionally a page has additional information which precedes the actual body in the markup, and can be mistaken for its real beginning. The "Synonyms" section of some pages is an example.
 - This readme could be more detailed.

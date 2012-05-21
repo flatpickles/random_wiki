@@ -11,13 +11,13 @@ bitly_key = both[0]
 twitter_pw = both[1]
 
 # initialize tweepy
-auth = tweepy.auth.BasicAuthHandler(twitter_un, twitter_pw)
-twitter_api = tweepy.API(auth)
+auth = tweepy.BasicAuthHandler(username=twitter_un, password=twitter_pw)
+twitter_api = tweepy.API(auth_handler=auth, secure=True, retry_count=3)
 
 # list to define substrings which cannot end sentences
-not_ends = ["mr", "mrs", "dr", "ms", "ph", "jr", "sr", "no", "b", "esp", "pub", "br", "prof", \
-"fr", "c", "d", "b", "i", "ii", "iii", "inc", "lt", "v", "bros", "bap", "var", "lit", "st", \
-"ave", "blvd", "ct", "ltd", "co", "eng", "jan", "feb", "aug", "sep", "oct", "nov", "dec", "ca", "and"]
+not_ends = ["mr", "mrs", "dr", "ms", "ph", "jr", "sr", "no", "esp", "pub", "br", "prof", \
+"fr", "ii", "iii", "inc", "lt", "v", "bros", "bap", "var", "lit", "st", "ca", "and", \
+"ave", "blvd", "ct", "ltd", "co", "eng", "jan", "feb", "aug", "sep", "oct", "nov", "dec"]
 not_ends.extend([l for l in string.ascii_lowercase])
 
 # strips all substrings in txt surrounded by chars[0] and chars[1]
@@ -128,6 +128,7 @@ if __name__ == "__main__":
 			# tweet
 			tweet = get_random_page(120)
 			print "Tweeting: \"%s\"" % tweet
+			twitter_api.update_status(tweet)
 			
 			# carry on
 			wait_time = get_wait_time()
