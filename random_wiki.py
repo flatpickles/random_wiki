@@ -1,4 +1,4 @@
-import urllib, urllib2, re, string, tweepy, sys, time, datetime
+import urllib, urllib2, re, string, tweepy, sys, time, datetime, random
 
 # open creds file (private, uncommited storage of Bitly and Twitter credentials)
 creds_file = open("creds")
@@ -40,7 +40,7 @@ def shorten(url):
 def decode_digit(s):
 	return re.sub('[^A-Za-z0-9]+', '', s).isdigit()
 
-# get a first_sentence (first sentence, or portion thereof) from a body of text
+# get a snippet (first sentence, or portion thereof) from a body of text
 def get_first_sentence(body, length):
 	pgs = body.split("<p>")
 	nohtml = strip_between(pgs[1].split("</p>")[0], ['<', '>'])
@@ -112,10 +112,13 @@ def get_random_page(maxchars):
 
 # returns a good (somewhat random) time (float, in seconds) to wait before tweeting next
 def get_wait_time():
-	
-	
-	
-	return 1.0
+	# as a base, wait between 1.5 and three hours
+	t = random.randrange(1.5 * 60 * 60, 3 * 60 * 60)
+	# add to this based on distance from 2:00pm (around which more tweets should happen)
+	hour_offset = abs(14 - datetime.datetime.now().hour)
+	t += random.randrange(hour_offset * 5, hour_offset * 10) # [0, 2] hours
+	# go time
+	return float(t)
 
 # entry point
 if __name__ == "__main__":
@@ -129,20 +132,21 @@ if __name__ == "__main__":
 	try:
 		while True:
 			# sleep
-			print "Waiting for %d seconds before tweeting next...\n" % wait_time
+			print "Waiting for %d hour(s), %d minutes before tweeting next...\n" % (wait_time / 60 / 60, (wait_time / 60) % 60)
 			time.sleep(wait_time)
 			now = datetime.datetime.now()
 			
 			# tweet
-			tweet = get_random_page(120)
+			tweet = get_random_page(120) # could have more chars, but this is nice
 			api = tw_init() # init for every tweet, in case API times out
 			print "[%s] Tweeting to account with name \"%s\":" % (now.strftime("%m/%d %H:%M"), api.me().name)
 			print tweet
-			# api.update_status(tweet)
+			api.update_status(tweet)
 			
 			# carry on
 			wait_time = get_wait_time()
 			when_set = time.time()
 		
 	except KeyboardInterrupt:
-		print "\nYou killed random_wiki. Would have waited %d more seconds." % max(int(when_set + wait_time - time.time()), 0)
+		nxt = max(int(when_set + wait_time - time.time()), 0)
+		print "\nWould have waited for %d hour(s), %d minutes before tweeting next.\n" % (nxt / 60 / 60, (nxt / 60) % 60)
