@@ -1,18 +1,22 @@
-import urllib, urllib2, re, string, tweepy, sys, time
-
-# usernames for services
-bitly_un = "hazmattron"
-twitter_un = "random_wiki"
+import urllib, urllib2, re, string, tweepy, sys, time, datetime
 
 # open creds file (private, uncommited storage of Bitly and Twitter credentials)
-creds = open("creds")
-both = creds.read().split("\n")
-bitly_key = both[0]
-twitter_pw = both[1]
+creds_file = open("creds")
+creds = creds_file.read().split("\n")
+bitly_un = creds[0]   # bitly username
+bitly_key = creds[1]  # bitly API key
+twitter_ck = creds[2] # twitter consumer key
+twitter_cs = creds[3] # twitter consumer secret
+twitter_at = creds[4] # twitter access token
+twitter_as = creds[5] # twitter access token secret
 
-# initialize tweepy
-auth = tweepy.BasicAuthHandler(username=twitter_un, password=twitter_pw)
-twitter_api = tweepy.API(auth_handler=auth, secure=True, retry_count=3)
+# initialize twitter API using global creds, return API object
+def tw_init():
+	auth = tweepy.OAuthHandler(twitter_ck, twitter_cs)
+	auth.set_access_token(twitter_at, twitter_as)
+
+	api = tweepy.API(auth)
+	return api
 
 # list to define substrings which cannot end sentences
 not_ends = ["mr", "mrs", "dr", "ms", "ph", "jr", "sr", "no", "esp", "pub", "br", "prof", \
@@ -70,7 +74,7 @@ def get_first_sentence(body, length):
 				":" in first_sentence or \
 				"^" in first_sentence or \
 				first_sentence[0] not in string.ascii_uppercase:
-		return get_first_sentence(body, length)
+		return None # caller should try again
 	
 	# otherwise, make presentable
 	else:
@@ -89,9 +93,9 @@ def get_first_sentence(body, length):
 
 # returns a string with the first snippit of a random wikipedia page and a link (provide characters desired)
 def get_random_page(maxchars):
-	first_sentence = ""
+	first_sentence = None
 	shortened = ""
-	while len(first_sentence) == 0:
+	while first_sentence == None:
 		try:
 			# get page and stuff
 			opener = urllib2.build_opener()
@@ -102,13 +106,16 @@ def get_random_page(maxchars):
 			page = infile.read()
 			first_sentence = get_first_sentence(page, maxchars - len(shortened))
 		except Exception:
-			first_sentence = "" # loop again
+			first_sentence = None # loop again
 	
 	return first_sentence + " " + shortened
 
 # returns a good (somewhat random) time (float, in seconds) to wait before tweeting next
 def get_wait_time():
-	return 16.0
+	
+	
+	
+	return 1.0
 
 # entry point
 if __name__ == "__main__":
@@ -122,13 +129,16 @@ if __name__ == "__main__":
 	try:
 		while True:
 			# sleep
-			print "Waiting for %d seconds before tweeting next..." % wait_time
+			print "Waiting for %d seconds before tweeting next...\n" % wait_time
 			time.sleep(wait_time)
+			now = datetime.datetime.now()
 			
 			# tweet
 			tweet = get_random_page(120)
-			print "Tweeting: \"%s\"" % tweet
-			twitter_api.update_status(tweet)
+			api = tw_init() # init for every tweet, in case API times out
+			print "[%s] Tweeting to account with name \"%s\":" % (now.strftime("%m/%d %H:%M"), api.me().name)
+			print tweet
+			# api.update_status(tweet)
 			
 			# carry on
 			wait_time = get_wait_time()
