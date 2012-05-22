@@ -123,7 +123,7 @@ def get_wait_time():
 	t = random.randrange(60 * 60, 3 * 60 * 60)
 	# add to this based on distance from 2:00pm (around which more tweets should happen)
 	hour_offset = abs(14 - datetime.datetime.now().hour)
-	t += 60 * random.randrange(hour_offset * 5, hour_offset * 10) # [0, 2] hours
+	t += 60 * random.randrange(hour_offset * 5, hour_offset * 10 + 1) # [0, 2] hours, avoid [0, 0]
 	# go time
 	return float(t)
 
