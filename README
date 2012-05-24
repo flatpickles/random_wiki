@@ -1,7 +1,7 @@
 random_wiki
 Matt Nichols
 
-random_wiki is a Python script which tweets the first sentence of a random Wikipedia article and a shortened link to said article several times a day. Using several rules, the script attempts to generate an aesthetic tweet (avoiding common garbage from in-process pages, uncommon formattings, and the like), and determine a reasonable amount of time to wait before tweeting again. The latter is mostly random, but varies somewhat by time of day (tweets should be more frequent around 2:00pm, and less frequent in the middle of the night).
+random_wiki is a Python script which tweets the first sentence of a random Wikipedia article and a shortened link to said article several times a day. Using several rules, the script attempts to generate an aesthetic tweet (avoiding common garbage from in-process pages, uncommon formattings, and the like), and determine a reasonable amount of time to wait before tweeting again (randomly, between two and four hours).
 
 Known issues:
 
