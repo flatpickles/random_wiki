@@ -45,16 +45,23 @@ def shorten(url):
 
 # returns whether a string represents a number (even if number contains weird unicode)
 def decode_digit(s):
-	return re.sub('[^A-Za-z0-9]+', '', s).isdigit()
+	return re.sub('[^A-Za-z0-9]+', '', s).isdigit() and len(s) < 4 # mostly for coordinates -- not years, more significant things...
 
 # get a snippet (first sentence, or portion thereof) from a body of text
 def get_first_sentence(body, length):
+	# if it has an infobox, chances are first <p> won't be the first sentence
+	# eventually incorporate a HTML parser to actually solve this problem...
+	if "<table class=\"infobox" in body:
+		return None
+	
+	# find the first sentence
 	pgs = body.split("<p>")
 	nohtml = strip_between(pgs[1].split("</p>")[0], ['<', '>'])
 	nobrak = strip_between(nohtml, ['\[', '\]'])
 	nodub = nobrak.replace("  ", " ")
 	betweenp = nodub.replace(" .", ".").split(".")
 	first_sentence = betweenp[0]
+	c = 1
 	
 	# find the actual end of the sentence
 	while True:
@@ -65,8 +72,9 @@ def get_first_sentence(body, length):
 				or first_sentence.split("(")[-1:][0].lower() in not_ends \
 				or decode_digit(first_sentence.split("(")[-1:][0]): # starting parens
 			first_sentence += "." + betweenp[c]
+			c += 1
 		else: break
-		
+
 	# filter by some rules
 	if len(first_sentence) == 0 or \
 				len(first_sentence.split(" ")) < 4 or \

@@ -6,5 +6,5 @@ random_wiki is a Python script which tweets the first sentence of a random Wikip
 Known issues:
 
 - Sentence endings are determined using periods, but excepting circumstances to which any of several rules apply ("Dr.", "U.S.A.", or "Ph.D." are examples where this is necessary). However, there's no way I've catalogued all possible abbreviations, so there will inevitably be some errors here.
-- The body of the article is found by the first <p> segment of the Wikipedia webpage, but occasionally a page has additional information which precedes the actual body in the markup, and can be mistaken for its real beginning. The "Synonyms" section of some pages is an example.
+- The body of the article is found by the first <p> segment of the Wikipedia webpage, but occasionally a page will have an infoboxe which precedes the actual body of text in the markup, and have content which can be mistaken for the article's real beginning. The "Synonyms" section of some pages is an example. As a workaround, random_wiki will not post from pages including these infoboxes, but eventually I'll incorporate a HTML parser for even more intelligent first sentence identification.
 - This readme could be more detailed.
