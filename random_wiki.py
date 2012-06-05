@@ -28,7 +28,7 @@ def tw_init():
 # list to define substrings which cannot end sentences
 not_ends = ["mr", "mrs", "dr", "ms", "ph", "jr", "sr", "no", "esp", "pub", "br", "prof", \
 "fr", "ii", "iii", "inc", "lt", "v", "bros", "bap", "var", "lit", "st", "ca", "and", "al", \
-"ave", "blvd", "ct", "ltd", "co", "eng", "jan", "feb", "aug", "sep", "oct", "nov", "dec"]
+"ave", "blvd", "ct", "ltd", "co", "eng", "jan", "feb", "aug", "sep", "oct", "nov", "dec", "ed"]
 not_ends.extend([l for l in string.ascii_lowercase])
 
 # strips all substrings in txt surrounded by chars[0] and chars[1]
@@ -86,6 +86,7 @@ def get_first_sentence(body, length):
 				"translated version" in first_sentence or \
 				"Coordinate" in first_sentence or \
 				"Glossary" in first_sentence or \
+				"needs more context" in first_sentence or \
 				":" in first_sentence or \
 				"^" in first_sentence or \
 				first_sentence[0] not in string.ascii_uppercase:
