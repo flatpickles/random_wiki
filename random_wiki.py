@@ -28,7 +28,8 @@ def tw_init():
 # list to define substrings which cannot end sentences
 not_ends = ["mr", "mrs", "dr", "ms", "ph", "jr", "sr", "no", "esp", "pub", "br", "prof", \
 "fr", "ii", "iii", "inc", "lt", "v", "bros", "bap", "var", "lit", "st", "ca", "and", "al", \
-"ave", "blvd", "ct", "ltd", "co", "eng", "jan", "feb", "aug", "sep", "oct", "nov", "dec", "ed"]
+"ave", "blvd", "ct", "ltd", "co", "eng", "jan", "feb", "aug", "sep", "oct", "nov", "dec", \
+"pop", "alt", "ed"]
 not_ends.extend([l for l in string.ascii_lowercase])
 
 # strips all substrings in txt surrounded by chars[0] and chars[1]
